@@ -7,3 +7,7 @@ This repo does not add any new features to the seunjeon plugin itself. It is jus
 # Limit of this rebuild
 
 The current rebuild works well with ES version 7.8. The rebuild will fail if any plugin dependencies introduce broken changes. `build.sbt` file inside the plug-in repository will need manual modifications to suit the changes.
+
+# Implementation
+
+see [rebuild steps](rebuild.md)
