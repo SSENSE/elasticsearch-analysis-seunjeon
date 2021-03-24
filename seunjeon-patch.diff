@@ -15,7 +15,7 @@ index d3f2d32..3ab7b61 100644
  
  val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
 -val esVersion = "6.1.1"
-+val esVersion = "7.1.1"
++val esVersion = $es_version_for_rebuild
  val esJavaVersion = "1.8"
  
  lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
@@ -61,7 +61,7 @@ index 8709c91..3e33aef 100644
                                      String name,
                                      Settings settings) {
 -        super(indexSettings, name, settings);
-+        super(indexSettings, settings);
++        super(indexSettings, settings, name);
  
          this.options = TokenizerOptions.create(name).
                  setUserDictPath(getFullPath(env, settings.get("user_dict_path", null))).

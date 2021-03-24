@@ -20,7 +20,7 @@ git clone https://bitbucket.org/eunjeon/seunjeon/src/master/elasticsearch/
 # Modify the file build.sbt to work it with your ES version 
 
 ```
-git apply path-to/elasticsearch-analysis-seunjeon/seunjeon-patch.diff
+sed 's/\$es_version_for_rebuild/"your_es_version"/' ~/elasticsearch-analysis-seunjeon/seunjeon-patch.diff | git apply
 ```
 
 # Build the dictionary
@@ -28,6 +28,7 @@ git apply path-to/elasticsearch-analysis-seunjeon/seunjeon-patch.diff
 sbt -J-Xmx2G "runMain org.bitbucket.eunjeon.seunjeon.DictBuilder"
 ```
 
+This step might fail if your es version does not work with certain types or dependencies of the plugin. You may need to manually change certain parts in the plug in code to make the build pass. See [Limit of this rebuild](README.md)
 # Build es plugin
 ```
 sbt elasticsearch/esZip 
