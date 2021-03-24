@@ -34,8 +34,9 @@ This step might fail if your es version does not work with certain types or depe
 sbt elasticsearch/esZip 
 ```
 
-In your Elasticsearch cluster
+Now you should be able to see elasticsearch-analysis-seunjeon-assembly-yourEsVersion.zip inside of /elastic/target folder. And you are good to go.
 # Install plugin in Elasticsearch
+In your Elasticsearch cluster
 ```
 bin/elasticsearch-plugin install file:///elasticsearch/target/elasticsearch-analysis-seunjeon-assembly-7.1.1.1.zip
 ```
