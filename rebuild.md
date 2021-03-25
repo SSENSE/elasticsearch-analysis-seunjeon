@@ -33,11 +33,11 @@ sbt -J-Xmx2G "runMain org.bitbucket.eunjeon.seunjeon.DictBuilder"
 sbt elasticsearch/esZip 
 ```
 
-The above two steps might fail if your es version does not work with certain types or dependencies the original plugin used. You may need to manually change certain parts in the plugin code to make the build pass. See [Limit of this rebuild](README.md)
+The above two steps might fail if your es version does not work with certain types or dependencies the original plugin used. You may need to manually change certain parts in the plugin code to make the build pass as mentioned in [Limit of this rebuild](README.md)
 
-If you could make your build work, please contribute to this repo by making your changes into the git diff patch and make a pull request.
+If you could make your build work, please contribute to this repo by making your changes into a git diff patch file and make a pull request!
 
-Now you should be able to see elasticsearch-analysis-seunjeon-assembly-yourEsVersion.zip inside of /elastic/target folder. And you are good to go.
+Now you should be able to see elasticsearch-analysis-seunjeon-assembly-yourEsVersion.zip inside of /elastic/target folder. And you are good to install it.
 
 # Install plugin in Elasticsearch
 In your Elasticsearch cluster
