@@ -1,0 +1,87 @@
+diff --git a/build.sbt b/build.sbt
+index d3f2d32..fa58780 100644
+--- a/build.sbt
++++ b/build.sbt
+@@ -6,7 +6,6 @@ lazy val commonSettings = Seq(
+   scalaVersion := "2.12.0",   // default
+   publishMavenStyle := true,
+   publishArtifact in Test := false,
+-  useGpg := true,
+   publishTo := {
+     val nexus = "https://oss.sonatype.org/"
+     if (version.value.trim.endsWith("SNAPSHOT"))
+@@ -66,7 +65,7 @@ lazy val seunjeon = (project in file(".")).
+   )
+ 
+ val elasticsearchPluginName = "elasticsearch-analysis-seunjeon"
+-val esVersion = "6.1.1"
++val esVersion = "6.8.0"
+ val esJavaVersion = "1.8"
+ 
+ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
+@@ -112,8 +111,8 @@ lazy val elasticsearch = (project in file("elasticsearch")).dependsOn(seunjeon).
+       val zipFile = file(jarFile.getPath.substring(0, jarFile.getPath.length - jarFile.ext.length - 1) + ".zip")
+       IO.zip(
+         List(
+-          (propertiesFile, s"elasticsearch/${propertiesFile.getName}"),
+-          (jarFile, s"elasticsearch/${jarFile.getName}")),
++          (propertiesFile, s"${propertiesFile.getName}"),
++          (jarFile, s"${jarFile.getName}")),
+         zipFile)
+       zipFile
+     },
+diff --git a/elasticsearch/src/main/java/org/bitbucket/eunjeon/seunjeon/elasticsearch/SeunjeonTokenizer.java b/elasticsearch/src/main/java/org/bitbucket/eunjeon/seunjeon/elasticsearch/SeunjeonTokenizer.java
+index ac9a3d7..aa670fb 100644
+--- a/elasticsearch/src/main/java/org/bitbucket/eunjeon/seunjeon/elasticsearch/SeunjeonTokenizer.java
++++ b/elasticsearch/src/main/java/org/bitbucket/eunjeon/seunjeon/elasticsearch/SeunjeonTokenizer.java
+@@ -5,7 +5,7 @@ import org.apache.lucene.analysis.Tokenizer;
+ import org.apache.lucene.analysis.tokenattributes.*;
+ import org.apache.lucene.analysis.util.RollingCharBuffer;
+ import org.apache.lucene.util.AttributeFactory;
+-import org.elasticsearch.common.logging.ESLoggerFactory;
++import org.apache.logging.log4j.LogManager;
+ 
+ import java.io.IOException;
+ import java.io.StringWriter;
+@@ -29,7 +29,7 @@ public class SeunjeonTokenizer extends Tokenizer {
+ 
+     public SeunjeonTokenizer(TokenizerOptions options) {
+         super(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
+-        logger = ESLoggerFactory.getLogger(options.getName());
++        logger = LogManager.getLogger(options.getName());
+ 
+         initAttribute();
+         tokenizerHelper = new TokenizerHelper(
+diff --git a/elasticsearch/src/main/java/org/bitbucket/eunjeon/seunjeon/elasticsearch/index/analysis/SeunjeonTokenizerFactory.java b/elasticsearch/src/main/java/org/bitbucket/eunjeon/seunjeon/elasticsearch/index/analysis/SeunjeonTokenizerFactory.java
+index 8709c91..e361ab5 100644
+--- a/elasticsearch/src/main/java/org/bitbucket/eunjeon/seunjeon/elasticsearch/index/analysis/SeunjeonTokenizerFactory.java
++++ b/elasticsearch/src/main/java/org/bitbucket/eunjeon/seunjeon/elasticsearch/index/analysis/SeunjeonTokenizerFactory.java
+@@ -20,7 +20,7 @@ public class SeunjeonTokenizerFactory extends AbstractTokenizerFactory {
+                                     Environment env,
+                                     String name,
+                                     Settings settings) {
+-        super(indexSettings, name, settings);
++        super(indexSettings, "", settings);
+ 
+         this.options = TokenizerOptions.create(name).
+                 setUserDictPath(getFullPath(env, settings.get("user_dict_path", null))).
+diff --git a/elasticsearch/src/main/scala/org/bitbucket/eunjeon/seunjeon/elasticsearch/TokenizerHelper.scala b/elasticsearch/src/main/scala/org/bitbucket/eunjeon/seunjeon/elasticsearch/TokenizerHelper.scala
+index 7e60075..4feb2d7 100644
+--- a/elasticsearch/src/main/scala/org/bitbucket/eunjeon/seunjeon/elasticsearch/TokenizerHelper.scala
++++ b/elasticsearch/src/main/scala/org/bitbucket/eunjeon/seunjeon/elasticsearch/TokenizerHelper.scala
+@@ -6,13 +6,13 @@ import java.util.InvalidPropertiesFormatException
+ import org.apache.logging.log4j.Logger
+ import org.bitbucket.eunjeon.seunjeon._
+ import org.bitbucket.eunjeon.seunjeon.Pos.Pos
+-import org.elasticsearch.common.logging.ESLoggerFactory
++import org.apache.logging.log4j.LogManager
+ 
+ import scala.collection.JavaConverters._
+ 
+ 
+ object TokenizerHelper {
+-  val logger: Logger = ESLoggerFactory.getLogger(TokenizerHelper.getClass.getName)
++  val logger: Logger = LogManager.getLogger(TokenizerHelper.getClass.getName)
+ 
+   val compress: Boolean = System.getProperty("seunjeon.compress") match {
+     case "true" => true
